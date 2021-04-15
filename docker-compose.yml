@@ -1,0 +1,36 @@
+version: '3.7'
+
+#Docker Networks
+networks:
+  laravel-network:
+    name: laravel-network
+    driver: bridge
+
+services:
+  dblaravel:
+    image: mariadb:10.5-bionic
+    container_name: laraveldb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "9906:3306"
+    volumes: 
+      -  ./db:/var/lib/mysql
+    networks:
+      - laravel-network
+  weblaravel:
+    build: .
+    container_name: laravelweb
+    depends_on:
+      - dblaravel
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/var/www/html/henkel/concorsi
+    stdin_open: true
+    tty: true
+    networks:
+      - laravel-network
