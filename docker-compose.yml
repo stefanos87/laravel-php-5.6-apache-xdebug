@@ -22,7 +22,7 @@ services:
     networks:
       - laravel-network
   weblaravel:
-    build: .
+    image: stefanos87/laravel-php-5.6-apache-xdebug-php:latest
     container_name: laravelweb
     depends_on:
       - dblaravel
