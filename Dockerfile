@@ -79,6 +79,18 @@ RUN npm install --global gulp-cli
 RUN apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
+    
+#DUSK
+RUN apt-get install -y libxpm4 libxrender1 chromium libgtk2.0-0 libnss3 libgconf-2-4 xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable x11-apps
+
+#cromium driver
+RUN wget https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
+RUN unzip ~/chromedriver_linux64.zip -d ~/
+RUN rm ~/chromedriver_linux64.zip
+RUN mv -f ~/chromedriver /usr/local/bin/chromedriver
+#RUN //chown root:root /usr/local/bin/chromedriver
+RUN chmod 0755 /usr/local/bin/chromedriver
+RUN Xvfb -ac :0 -screen 0 1280x1024x16 &
 
 # Configure apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
