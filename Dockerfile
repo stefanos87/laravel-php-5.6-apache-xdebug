@@ -11,6 +11,7 @@ RUN apt-get update && \
     apt-get -y install \
             g++ \
             git \
+            wget \
             curl \
             imagemagick \
             libcurl3-dev \
