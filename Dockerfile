@@ -10,15 +10,15 @@ RUN apt-get update && \
     apt-get update && \
     apt-get -y install \
             g++ \
-            git \
             wget \
+            git \
             curl \
             imagemagick \
             libcurl3-dev \
             libicu-dev \
             libfreetype6-dev \
             libjpeg-dev \
-            libjpeg62-turbo-dev \
+            libjpeg62-turbo-dev -qy \
             libonig-dev \
             libmagickwand-dev \
             libpq-dev \
@@ -38,7 +38,7 @@ RUN apt-get update && \
         apt-get clean && \
         rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ARG X_LEGACY_GD_LIB=0
+ARG X_LEGACY_GD_LIB=1
 RUN if [ $X_LEGACY_GD_LIB = 1 ]; then \
         docker-php-ext-configure gd \
                 --with-freetype-dir=/usr/include/ \
@@ -64,6 +64,7 @@ RUN if [ $X_LEGACY_GD_LIB = 1 ]; then \
         pdo_mysql \
         pdo_pgsql
 
+#Installing LDAP
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/
 RUN docker-php-ext-install ldap
 
@@ -77,21 +78,33 @@ RUN apt-get install -y nodejs
 RUN apt-get install -y build-essential
 RUN npm install --global gulp-cli
 
+
+#cromium driver
+# RUN wget https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
+# RUN unzip ~/chromedriver_linux64.zip -d ~/
+# RUN rm ~/chromedriver_linux64.zip
+# RUN mv -f ~/chromedriver /usr/local/bin/chromedriver
+# RUN chmod 0755 /usr/local/bin/chromedriver
+# RUN Xvfb -ac :0 -screen 0 1280x1024x16 &
+
+#chrome
+# RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+# RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+# RUN apt-get update 
+# RUN apt-get install google-chrome-stable
+
+#DUSK
+#RUN apt-get install -y libxpm4 libxrender1 chromium libgtk2.0-0 libnss3 libgconf-2-4 xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable x11-apps
+RUN apt-get install -y libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable x11-apps
+#CHROME
+RUN apt-get install -y libxss1 libappindicator1 libindicator7
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome*.deb 
+
+
 RUN apt-get clean \
     && apt-get -y autoremove \
     && rm -rf /var/lib/apt/lists/*
-    
-#DUSK
-RUN apt-get install -y libxpm4 libxrender1 chromium libgtk2.0-0 libnss3 libgconf-2-4 xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable x11-apps
-
-#cromium driver
-RUN wget https://chromedriver.storage.googleapis.com/91.0.4472.101/chromedriver_linux64.zip -P ~/
-RUN unzip ~/chromedriver_linux64.zip -d ~/
-RUN rm ~/chromedriver_linux64.zip
-RUN mv -f ~/chromedriver /usr/local/bin/chromedriver
-#RUN //chown root:root /usr/local/bin/chromedriver
-RUN chmod 0755 /usr/local/bin/chromedriver
-RUN Xvfb -ac :0 -screen 0 1280x1024x16 &
 
 # Configure apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
